@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Plus, Settings, Sparkles, BarChart2, Info, Moon, Sun } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Plus, BarChart2, Sun, Moon, Sparkles } from 'lucide-react';
 import { Habit, AIAdvice } from './types';
 import HabitCard from './components/HabitCard';
 import HabitModal from './components/HabitModal';
@@ -18,7 +17,7 @@ const App: React.FC = () => {
   });
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [view, setView] = useState<'grid' | 'stats'>('grid');
   const [aiCoach, setAiCoach] = useState<AIAdvice | null>(null);
   const [loadingAI, setLoadingAI] = useState(false);
@@ -29,7 +28,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem('nova_theme', theme);
-    // Apply background color to body for seamless experience
     document.body.className = theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-slate-900';
   }, [theme]);
 
@@ -73,20 +71,22 @@ const App: React.FC = () => {
       return [...prev, habit];
     });
     setIsModalOpen(false);
-    setEditingHabit(undefined);
+    setEditingHabit(null);
   };
 
   const deleteHabit = (id: string) => {
     setHabits(prev => prev.filter(h => h.id !== id));
     setIsModalOpen(false);
-    setEditingHabit(undefined);
+    setEditingHabit(null);
   };
 
   const handleFetchCoach = async () => {
     if (habits.length === 0) return;
     setLoadingAI(true);
     const advice = await getHabitCoaching(habits);
-    if (advice) setAiCoach(advice);
+    if (advice) {
+      setAiCoach(advice);
+    }
     setLoadingAI(false);
   };
 
@@ -99,7 +99,6 @@ const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen pb-32 transition-colors duration-300 ${isDark ? 'bg-black text-white' : 'bg-slate-50 text-slate-900'}`}>
-      {/* Header */}
       <header className={`px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-30 border-b backdrop-blur-lg ${isDark ? 'bg-black/80 border-white/5' : 'bg-white/80 border-slate-200'}`}>
         <div>
           <h1 className="text-3xl font-black tracking-tighter uppercase italic leading-none">Nova</h1>
@@ -108,22 +107,19 @@ const App: React.FC = () => {
         <div className="flex gap-2">
           <button 
             onClick={toggleTheme}
-            className={`p-3 rounded-2xl transition-all ${isDark ? 'bg-white/5 text-white/60' : 'bg-white text-slate-600 shadow-sm border border-slate-200'}`}
+            className={`p-3 rounded-2xl transition-all ${isDark ? 'bg-white/5 text-white/60 hover:bg-white/10' : 'bg-white text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50'}`}
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <button 
             onClick={() => setView(view === 'grid' ? 'stats' : 'grid')}
-            className={`p-3 rounded-2xl transition-all ${view === 'stats' ? (isDark ? 'bg-white text-black' : 'bg-slate-900 text-white') : (isDark ? 'bg-white/5 text-white/60' : 'bg-white text-slate-600 shadow-sm border border-slate-200')}`}
+            className={`p-3 rounded-2xl transition-all ${view === 'stats' ? (isDark ? 'bg-white text-black' : 'bg-slate-900 text-white') : (isDark ? 'bg-white/5 text-white/60 hover:bg-white/10' : 'bg-white text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50')}`}
           >
             <BarChart2 size={20} />
           </button>
           <button 
-            onClick={() => {
-              setEditingHabit(undefined);
-              setIsModalOpen(true);
-            }}
-            className={`p-3 rounded-2xl hover:scale-105 active:scale-95 transition-all ${isDark ? 'bg-white text-black' : 'bg-slate-900 text-white'}`}
+            onClick={() => { setEditingHabit(null); setIsModalOpen(true); }}
+            className={`p-3 rounded-2xl hover:scale-105 active:scale-95 transition-all ${isDark ? 'bg-white text-black shadow-lg shadow-white/10' : 'bg-slate-900 text-white shadow-lg shadow-slate-200'}`}
           >
             <Plus size={20} />
           </button>
@@ -131,7 +127,6 @@ const App: React.FC = () => {
       </header>
 
       <main className="px-6 mt-8 max-w-4xl mx-auto">
-        {/* AI Motivation Section */}
         {view === 'grid' && (
           <div 
             onClick={handleFetchCoach}
@@ -156,9 +151,7 @@ const App: React.FC = () => {
                 <p className="text-lg font-black uppercase tracking-tight">Tap to analyze performance</p>
               )}
             </div>
-            <div className={`absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              <Sparkles size={120} />
-            </div>
+            <div className={`absolute -right-10 -bottom-10 w-40 h-40 rounded-full blur-3xl opacity-20 transition-transform group-hover:scale-150 ${isDark ? 'bg-indigo-500' : 'bg-indigo-300'}`}></div>
           </div>
         )}
 
@@ -169,8 +162,8 @@ const App: React.FC = () => {
                 <HabitCard 
                   key={habit.id} 
                   habit={habit} 
-                  theme={theme}
-                  onToggle={toggleHabit}
+                  theme={theme} 
+                  onToggle={toggleHabit} 
                   onEdit={handleEditHabit}
                 />
               ))
@@ -179,7 +172,7 @@ const App: React.FC = () => {
                 <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${isDark ? 'bg-white/5 text-white/20' : 'bg-slate-100 text-slate-300'}`}>
                   <Plus size={40} />
                 </div>
-                <h2 className="text-xl font-black uppercase tracking-widest">Awaiting Objectives</h2>
+                <h2 className="text-xl font-black uppercase tracking-widest text-center">Awaiting Objectives</h2>
                 <p className={`max-w-xs mx-auto text-sm font-medium ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Add your daily habits to begin tracking your evolution.</p>
               </div>
             )}
@@ -189,24 +182,11 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Floating Instructions */}
-      {habits.length > 0 && view === 'grid' && (
-         <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-20 pointer-events-none transition-all ${isDark ? 'bg-white text-black' : 'bg-slate-900 text-white'}`}>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em]">
-              Hold to complete • Tap to edit
-            </p>
-         </div>
-      )}
-
-      {/* Modals */}
       {isModalOpen && (
         <HabitModal 
-          habit={editingHabit}
+          habit={editingHabit || undefined} 
           theme={theme}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingHabit(undefined);
-          }}
+          onClose={() => { setIsModalOpen(false); setEditingHabit(null); }}
           onSave={saveHabit}
           onDelete={deleteHabit}
         />

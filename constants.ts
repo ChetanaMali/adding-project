@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dumbbell, 
@@ -40,21 +39,21 @@ export const SOUNDS = [
 ];
 
 export const ICONS = [
-  { id: 'dumbbell', component: <Dumbbell /> },
-  { id: 'book', component: <Book /> },
-  { id: 'droplets', component: <Droplets /> },
-  { id: 'moon', component: <Moon /> },
-  { id: 'utensils', component: <Utensils /> },
-  { id: 'brain', component: <Brain /> },
-  { id: 'code', component: <Code /> },
-  { id: 'music', component: <Music /> },
-  { id: 'camera', component: <Camera /> },
-  { id: 'heart', component: <Heart /> },
-  { id: 'zap', component: <Zap /> },
-  { id: 'flame', component: <Flame /> },
+  { id: 'dumbbell', component: React.createElement(Dumbbell) },
+  { id: 'book', component: React.createElement(Book) },
+  { id: 'droplets', component: React.createElement(Droplets) },
+  { id: 'moon', component: React.createElement(Moon) },
+  { id: 'utensils', component: React.createElement(Utensils) },
+  { id: 'brain', component: React.createElement(Brain) },
+  { id: 'code', component: React.createElement(Code) },
+  { id: 'music', component: React.createElement(Music) },
+  { id: 'camera', component: React.createElement(Camera) },
+  { id: 'heart', component: React.createElement(Heart) },
+  { id: 'zap', component: React.createElement(Zap) },
+  { id: 'flame', component: React.createElement(Flame) },
 ];
 
 export const getIcon = (id: string) => {
   const icon = ICONS.find(i => i.id === id);
-  return icon ? icon.component : <Zap />;
+  return icon ? icon.component : React.createElement(Zap);
 };
